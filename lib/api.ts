@@ -8,6 +8,7 @@ export const checkApi = axios.create({
 checkApi.defaults.headers.common["Content-Type"] = "application/json";
 
 export const authApi = axios.create({
-  baseURL: `${baseURL}/auth`
+  baseURL: `${baseURL}/auth`,
+  withCredentials: true
 })
 authApi.defaults.headers.common["Content-Type"] = "application/json";
