@@ -16,6 +16,7 @@
     "axios": "^1.5.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "jose": "^5.0.1",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.289.0",
     "next": "13.5.6",
