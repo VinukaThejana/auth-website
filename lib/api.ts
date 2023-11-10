@@ -10,7 +10,9 @@ export const checkAccessToken = async (config: InternalAxiosRequestConfig): Prom
   const accessToken = getCookie("access_token");
   if (!accessToken) {
     try {
-      await authApi.get("/refresh");
+      await axios.post(`${baseURL}/auth/refresh`, {}, {
+        withCredentials: true,
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
