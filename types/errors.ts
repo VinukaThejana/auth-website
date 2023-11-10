@@ -20,4 +20,5 @@ export type Errs =
   | "reauth_token_not_present"
   | "verify_your_email_address_first"
   | "token_expired"
-  | "passkey_cannot_be_verified";
+  | "passkey_cannot_be_verified"
+  | "passkey_already_created";
