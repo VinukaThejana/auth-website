@@ -1,68 +1,68 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { cn } from "~/lib/utils"
-import { Icons } from "~/components/ui/icons"
-import { Button } from "~/components/ui/button"
-import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
-import { z } from "zod"
-import { BsUnlock, BsLock } from "react-icons/bs"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { FormError } from "~/components/util/form-error"
-import { schema } from "../utils/schema"
-import { authApi } from "~/lib/api"
-import { toast } from "sonner"
-import { AxiosError } from "axios"
-import { useRouter } from "next/navigation"
-import { User } from "~/types/user"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import { useForm } from "react-hook-form";
+import { BsLock, BsUnlock } from "react-icons/bs";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Button } from "~/components/ui/button";
+import { Icons } from "~/components/ui/icons";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { FormError } from "~/components/util/form-error";
+import { authApi } from "~/lib/api";
+import { cn } from "~/lib/utils";
+import { User } from "~/types/user";
+import { schema } from "../utils/schema";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function RegisterForm({ className, ...props }: UserAuthFormProps) {
-  const router = useRouter()
+export function LoginForm({ className, ...props }: UserAuthFormProps) {
+  const router = useRouter();
 
-  const [isPasswordVisible, setPasswordVisible] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isPasswordVisible, setPasswordVisible] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const { register, handleSubmit, formState, reset } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      username: ""
-    }
-  })
-  const { errors } = formState
+      username: "",
+    },
+  });
+  const { errors } = formState;
 
   async function onSubmit(values: z.infer<typeof schema>) {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const res = await authApi.post<{
         user: User;
-        status: string
+        status: string;
       }>("/login", {
         "username": values.username,
-        "password": values.password
-      })
+        "password": values.password,
+      });
 
-      toast.success("Logged in !")
-      router.push("/")
+      toast.success("Logged in !");
+      router.push("/");
     } catch (error) {
       const err = error as AxiosError<{
-        status: string
-      }>
-      console.error(err)
+        status: string;
+      }>;
+      console.error(err);
 
       switch (err.response?.data.status) {
         case "incorrect_credentials":
-          toast.error("Incorrect email or password")
+          toast.error("Incorrect email or password");
         default:
-          toast.error("Something went wrong")
+          toast.error("Something went wrong");
       }
     }
 
-    reset()
-    setIsLoading(false)
+    reset();
+    setIsLoading(false);
   }
 
   return (
@@ -115,9 +115,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             type="submit"
             disabled={isLoading || !formState.isValid}
           >
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
+            {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
             Sign In with Email
           </Button>
         </div>
@@ -133,13 +131,10 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
         </div>
       </div>
       <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Icons.gitHub className="mr-2 h-4 w-4" />
-        )}{" "}
-        Github
+        {isLoading
+          ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          : <Icons.gitHub className="mr-2 h-4 w-4" />} Github
       </Button>
     </div>
-  )
+  );
 }
