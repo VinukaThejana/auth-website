@@ -1,11 +1,16 @@
-import { Metadata } from "next"
-import Link from "next/link"
-import { RegisterForm } from "./components/Form"
+import { Metadata } from "next";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { LoginForm } from "./components/Form";
+
+const PassKey = dynamic(() => import("~/components/auth/passkeys-login"), {
+  ssr: false,
+});
 
 export const metadata: Metadata = {
   title: "Login | Authentication",
   description: "Register a user",
-}
+};
 
 export default function AuthenticationPage() {
   return (
@@ -21,7 +26,9 @@ export default function AuthenticationPage() {
                 Login with your email and password
               </p>
             </div>
-            <RegisterForm />
+            <LoginForm />
+
+            <PassKey />
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link
@@ -43,5 +50,5 @@ export default function AuthenticationPage() {
         </div>
       </div>
     </>
-  )
+  );
 }
