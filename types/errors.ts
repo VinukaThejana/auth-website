@@ -21,4 +21,5 @@ export type Errs =
   | "verify_your_email_address_first"
   | "token_expired"
   | "passkey_cannot_be_verified"
-  | "passkey_already_created";
+  | "passkey_already_created"
+  | "passkey_with_the_given_id_is_not_found";
