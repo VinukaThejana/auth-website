@@ -210,8 +210,8 @@ export default function PassKeys() {
                         </AlertDialogContent>
                       </AlertDialog>
 
-                      <div className="flex flex-col items-center justify-center">
-                        {isPassKeysLoading ? <Icons.spinner className="mr-2 h-12 w-12 animate-spin" /> : (
+                      <div className="flex flex-col justify-center">
+                        {isPassKeysLoading ? null : (
                           <>
                             {passKeysData && (
                               <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mt-6 items-center sm:w-fit w-full">
