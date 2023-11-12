@@ -1,8 +1,8 @@
 "use client";
 
 import { create } from "@github/webauthn-json";
-import { UndefinedInitialDataOptions, useQuery } from "@tanstack/react-query";
-import { Axios, AxiosError, AxiosInterceptorOptions } from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { BsPencil, BsSave, BsTrash } from "react-icons/bs";
 import { toast } from "sonner";
