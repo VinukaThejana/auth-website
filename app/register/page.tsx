@@ -1,15 +1,11 @@
-import { Metadata } from "next"
-import Image from "next/image"
-import Link from "next/link"
-
-import { cn } from "~/lib/utils"
-import { buttonVariants } from "~/components/ui/button"
-import { RegisterForm } from "./components/Form"
+import { Metadata } from "next";
+import Link from "next/link";
+import { RegisterForm } from "./components/Form";
 
 export const metadata: Metadata = {
   title: "Register | Authentication",
   description: "Register a user",
-}
+};
 
 export default function AuthenticationPage() {
   return (
@@ -47,5 +43,5 @@ export default function AuthenticationPage() {
         </div>
       </div>
     </>
-  )
+  );
 }
