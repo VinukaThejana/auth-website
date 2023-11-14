@@ -15,6 +15,7 @@ export async function POST(request: Request) {
     }
 
     const verification = await verifyRegistrationResponse({
+      // @ts-ignore
       response: cred,
       expectedChallenge: challenge,
       requireUserVerification: true,
