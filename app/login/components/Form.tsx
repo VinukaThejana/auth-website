@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { BsLock, BsUnlock } from "react-icons/bs";
 import { toast } from "sonner";
 import { z } from "zod";
+import PassKeys from "~/components/auth/passkeys-login";
 import { Button } from "~/components/ui/button";
 import { Icons } from "~/components/ui/icons";
 import { Input } from "~/components/ui/input";
@@ -118,6 +119,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
             {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
             Sign In with Email
           </Button>
+          <PassKeys />
         </div>
       </form>
       <div className="relative">

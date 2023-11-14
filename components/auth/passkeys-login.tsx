@@ -1,23 +1,23 @@
 "use client";
 
-import { get, supported } from "@github/webauthn-json";
+import { get } from "@github/webauthn-json";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BsKey } from "react-icons/bs";
 import { toast } from "sonner";
-import { authApi, checkAccessToken } from "~/lib/api";
+import { authApi } from "~/lib/api";
+import { checkAvailablity } from "~/lib/passkeys";
+import { Errs } from "~/types/errors";
 import { Button } from "../ui/button";
 
 export default function PassKeys() {
+  const router = useRouter();
   const [support, setSupport] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAvailablity = async () => {
-      const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-      setLoading(false);
-      setSupport(available && supported());
-    };
-
-    checkAvailablity();
+    checkAvailablity(setLoading, setSupport);
   }, []);
 
   const loginWithPassKey = async () => {
@@ -38,18 +38,44 @@ export default function PassKeys() {
 
       console.log(cred);
 
-      toast.success("Passkey created successfully");
+      try {
+        authApi.post("/passkeys/login", {
+          "cred": cred,
+        });
+        router.push("/");
+      } catch (error) {
+        const err = error as AxiosError<{
+          status: Errs;
+        }>;
+        switch (err.response?.data.status) {
+          case "passkey_cannot_be_verified":
+            toast.error("PassKey cannot be verified");
+            break;
+          default:
+            toast.error("Something went wrong");
+        }
+      }
     } catch (error) {
       console.error(error);
       toast.error("PassKey creation failed");
     }
   };
 
-  return (
-    <Button
-      onClick={async () => await loginWithPassKey()}
-    >
-      Login with PassKey
-    </Button>
-  );
+  return !loading
+    ? (
+      <>
+        {support
+          ? (
+            <Button
+              className="flex items-center justify-center gap-2"
+              onClick={async () => await loginWithPassKey()}
+            >
+              <BsKey />
+              Login with PassKey
+            </Button>
+          )
+          : null}
+      </>
+    )
+    : null;
 }

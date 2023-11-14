@@ -28,7 +28,6 @@ export default function AuthenticationPage() {
             </div>
             <LoginForm />
 
-            <PassKey />
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link
