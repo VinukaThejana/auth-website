@@ -3,4 +3,5 @@ export type PassKey = {
   UserID: string;
   PublicKey: string;
   Name: string;
+  Count: number;
 };
