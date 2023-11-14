@@ -1,6 +1,27 @@
 import { PublicKeyCredentialWithAttestationJSON } from "@github/webauthn-json";
 import { verifyRegistrationResponse } from "@simplewebauthn/server";
-import { binaryToBase64url, clean, HOST_SETTINGS } from "~/lib/utils";
+import { base64url } from "jose";
+import { HOST_SETTINGS } from "~/lib/utils";
+
+const response = (
+  status: number,
+  isValid: boolean,
+  credentialID: string | null,
+  credentialPublicKey: string | null,
+  err: any | null,
+) => {
+  return new Response(
+    JSON.stringify({
+      isValid: isValid,
+      credentialID: credentialID,
+      credentialPublicKey: credentialPublicKey,
+      err: err ? JSON.stringify(err) : null,
+    }),
+    {
+      status: status,
+    },
+  );
+};
 
 export async function POST(request: Request) {
   const payload = (await request.json()) as {
@@ -23,52 +44,41 @@ export async function POST(request: Request) {
     });
 
     if (!verification.verified) {
-      return new Response(
-        JSON.stringify({
-          isValid: false,
-          credentialID: null,
-          credentialPublicKey: null,
-          err: "cannot be verified",
-        }),
-        {
-          status: 400,
-        },
+      return response(
+        200,
+        false,
+        null,
+        null,
+        "verification failed",
       );
     }
 
     const { credentialID, credentialPublicKey } = verification.registrationInfo ?? {};
     if (!credentialID || !credentialPublicKey) {
-      return new Response(
-        JSON.stringify({
-          isValid: false,
-          credentialID: null,
-          credentialPublicKey: null,
-          err: "public key and credential id not valid",
-        }),
-        {
-          status: 400,
-        },
+      return response(
+        200,
+        false,
+        null,
+        null,
+        "public key and credential id not valid",
       );
     }
 
-    return new Response(JSON.stringify({
-      isValid: true,
-      credentialID: clean(binaryToBase64url(credentialID)),
-      credentialPublicKey: Buffer.from(credentialPublicKey).toString("base64"),
-      err: null,
-    }));
+    return response(
+      200,
+      true,
+      base64url.encode(credentialID),
+      base64url.encode(credentialPublicKey),
+      null,
+    );
   } catch (error) {
     console.error(error);
-    return new Response(
-      JSON.stringify({
-        isValid: false,
-        credentialID: null,
-        credentialPublicKey: null,
-        err: error,
-      }),
-      {
-        status: 500,
-      },
+    return response(
+      500,
+      false,
+      null,
+      null,
+      error,
     );
   }
 }
