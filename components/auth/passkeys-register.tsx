@@ -214,7 +214,7 @@ export default function PassKeys() {
                           <>
                             {passKeysData && (
                               <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mt-6 items-center sm:w-fit w-full">
-                                {passKeysData.passkeys.map((passKey, n) => (
+                                {passKeysData.passkeys?.map((passKey, n) => (
                                   <Card
                                     key={n}
                                     className="p-4 w-full"
