@@ -36,8 +36,6 @@ export default function PassKeys() {
         },
       });
 
-      console.log(cred);
-
       try {
         authApi.post("/passkeys/login", {
           "cred": cred,

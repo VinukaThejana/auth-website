@@ -67,7 +67,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("grid gap-4", className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-4">
           <div className="grid gap-2">
@@ -80,7 +80,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
                 placeholder="JohnDoe"
                 type="text"
                 autoCapitalize="none"
-                autoComplete="username"
+                autoComplete="username webauthn"
                 autoCorrect="off"
                 disabled={isLoading}
                 {...register("username")}
@@ -97,7 +97,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
                 id="password"
                 type={isPasswordVisible ? "text" : "password"}
                 autoCapitalize="none"
-                autoComplete="email"
+                autoComplete="password"
                 autoCorrect="off"
                 disabled={isLoading}
                 className="col-span-4"
@@ -119,9 +119,11 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
             {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
             Sign In with Email
           </Button>
-          <PassKeys />
         </div>
       </form>
+
+      <PassKeys />
+
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
