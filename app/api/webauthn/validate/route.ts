@@ -4,6 +4,8 @@ import { base64url } from "jose";
 import { HOST_SETTINGS } from "~/lib/utils";
 import { PassKey } from "~/types/passkeys";
 
+export const runtime = "nodejs";
+
 const response = (
   status: number,
   isValid: boolean,
@@ -56,7 +58,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("Validation was done successfully !");
     return response(
       200,
       true,

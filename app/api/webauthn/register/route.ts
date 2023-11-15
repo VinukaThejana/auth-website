@@ -3,6 +3,8 @@ import { verifyRegistrationResponse } from "@simplewebauthn/server";
 import { base64url } from "jose";
 import { HOST_SETTINGS } from "~/lib/utils";
 
+export const runtime = "nodejs";
+
 const response = (
   status: number,
   isValid: boolean,
