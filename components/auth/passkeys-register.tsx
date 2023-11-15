@@ -213,7 +213,7 @@ export default function PassKeys() {
                         {isPassKeysLoading ? null : (
                           <>
                             {passKeysData && (
-                              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mt-6 items-center sm:w-fit w-full">
+                              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mt-6 items-center">
                                 {passKeysData.passkeys?.map((passKey, n) => (
                                   <Card
                                     key={n}
