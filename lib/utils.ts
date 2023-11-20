@@ -18,6 +18,14 @@ export const HOST_SETTINGS = {
   expectedRPID: process.env.RPID ?? "localhost",
 };
 
+export function deleteCookie(name: string) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  document.cookie = `${name}= ; expires = Thu, 01 Jan 1970 00:00:00 GMT`;
+}
+
 export function binaryToBase64url(bytes: Uint8Array) {
   let str = "";
 
