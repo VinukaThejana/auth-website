@@ -24,7 +24,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
@@ -153,188 +153,195 @@ export default function PassKeys() {
   };
 
   return (
-    <>
-      {user && (
-        <>
-          {!loading
-            ? (
-              <>
-                {support
-                  ? (
-                    <>
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          <Button>
-                            Generate PassKey
-                          </Button>
-                        </AlertDialogTrigger>
+    <Card className="w-80 sm:w-[700px] min-h-[300px]">
+      <CardHeader>
+        <CardTitle>PassKeys</CardTitle>
+        <CardDescription>Create and manage passkeys</CardDescription>
+      </CardHeader>
 
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Enter a name for the passkey
-                            </AlertDialogTitle>
+      <CardContent>
+        {user && (
+          <>
+            {!loading
+              ? (
+                <>
+                  {support
+                    ? (
+                      <>
+                        <AlertDialog>
+                          <AlertDialogTrigger>
+                            <Button>
+                              Generate PassKey
+                            </Button>
+                          </AlertDialogTrigger>
 
-                            <AlertDialogDescription>
-                              <div className="flex flex-col gap-4 mx-4 my-6">
-                                <Label>
-                                  Enter a name for the PassKey
-                                </Label>
-                                <Input
-                                  className="w-96"
-                                  value={passKeyName}
-                                  onChange={(e) => setPassKeyName(e.currentTarget.value)}
-                                />
-                              </div>
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Enter a name for the passkey
+                              </AlertDialogTitle>
 
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={async () => {
-                                try {
-                                  const name = z.string().min(3).max(100).parse(passKeyName);
-                                  await generatePassKey(name);
-                                  await refetchPassKeys();
-                                  setPassKeyName("");
-                                } catch (error) {
-                                  toast.error("PassKey name is not valid");
-                                }
-                              }}
-                            >
-                              Create
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                              <AlertDialogDescription>
+                                <div className="flex flex-col gap-4 mx-4 my-6">
+                                  <Label>
+                                    Enter a name for the PassKey
+                                  </Label>
+                                  <Input
+                                    className="w-96"
+                                    value={passKeyName}
+                                    onChange={(e) => setPassKeyName(e.currentTarget.value)}
+                                  />
+                                </div>
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
 
-                      <div className="flex flex-col justify-center">
-                        {isPassKeysLoading ? null : (
-                          <>
-                            {passKeysData && (
-                              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mt-6 items-center">
-                                {passKeysData.passkeys?.map((passKey, n) => (
-                                  <Card
-                                    key={n}
-                                    className="p-4 w-full"
-                                  >
-                                    <CardHeader>
-                                      <CardTitle>
-                                        {editingPassKey === passKey.PassKeyID
-                                          ? (
-                                            <>
-                                              <Input
-                                                className="w-48"
-                                                placeholder={passKey.Name}
-                                                value={passKeyName}
-                                                onChange={(e) => setPassKeyName(e.currentTarget.value)}
-                                              />
-                                            </>
-                                          )
-                                          : (
-                                            <>
-                                              {passKey.Name}
-                                            </>
-                                          )}
-                                      </CardTitle>
-                                    </CardHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={async () => {
+                                  try {
+                                    const name = z.string().min(3).max(100).parse(passKeyName);
+                                    await generatePassKey(name);
+                                    await refetchPassKeys();
+                                    setPassKeyName("");
+                                  } catch (error) {
+                                    toast.error("PassKey name is not valid");
+                                  }
+                                }}
+                              >
+                                Create
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
 
-                                    <CardDescription className="flex flex-col justify-center ml-4 gap-2">
-                                      <p className="truncate">
-                                        {passKey.PassKeyID}
-                                      </p>
-                                      <div className="flex gap-2 mt-2">
-                                        <Button
-                                          className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-800"
-                                          onClick={async () => {
-                                            authApi.interceptors.request.use(checkAccessToken);
-                                            try {
-                                              await authApi.post("/passkeys/delete", {
-                                                "passKeyID": passKey.PassKeyID,
-                                              });
-                                            } catch (error) {
-                                              const err = error as AxiosError<{
-                                                status: Errs;
-                                              }>;
-                                              switch (err.response?.data.status) {
-                                                case "passkey_with_the_given_id_is_not_found":
-                                                  toast.error("PassKey with the given ID is not found");
-                                                  break;
-                                                default:
-                                                  toast.error("Something went wrong");
-                                              }
-                                            }
-
-                                            await refetchPassKeys();
-                                          }}
-                                        >
-                                          <BsTrash /> Delete
-                                        </Button>
-                                        <>
+                        <div className="flex flex-col justify-center">
+                          {isPassKeysLoading ? null : (
+                            <>
+                              {passKeysData && (
+                                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 mt-6 items-center">
+                                  {passKeysData.passkeys?.map((passKey, n) => (
+                                    <Card
+                                      key={n}
+                                      className="p-4 w-full"
+                                    >
+                                      <CardHeader>
+                                        <CardTitle>
                                           {editingPassKey === passKey.PassKeyID
                                             ? (
-                                              <Button
-                                                className="flex items-center justify-center gap-2"
-                                                onClick={async () => {
-                                                  setEditingPassKey(undefined);
-                                                  if (passKey.Name === passKeyName) {
-                                                    return;
-                                                  }
-
-                                                  authApi.interceptors.request.use(checkAccessToken);
-                                                  try {
-                                                    await authApi.post<{
-                                                      status: Errs;
-                                                    }>("/passkeys/edit", {
-                                                      "passKeyID": passKey.PassKeyID,
-                                                      "newName": passKeyName,
-                                                    });
-                                                  } catch (error) {
-                                                    const err = error as AxiosError<{
-                                                      status: Errs;
-                                                    }>;
-                                                    switch (err.response?.data.status) {
-                                                      case "passkey_with_the_given_id_is_not_found":
-                                                        toast.error("PassKey with the given ID is not found");
-                                                        break;
-                                                      default:
-                                                        toast.error("Something went wrong");
-                                                    }
-                                                  }
-
-                                                  await refetchPassKeys();
-                                                }}
-                                              >
-                                                <BsSave /> Save
-                                              </Button>
+                                              <>
+                                                <Input
+                                                  className="w-48"
+                                                  placeholder={passKey.Name}
+                                                  value={passKeyName}
+                                                  onChange={(e) => setPassKeyName(e.currentTarget.value)}
+                                                />
+                                              </>
                                             )
                                             : (
-                                              <Button
-                                                className="flex items-center justify-center gap-2"
-                                                onClick={() => setEditingPassKey(passKey.PassKeyID)}
-                                              >
-                                                <BsPencil /> Edit
-                                              </Button>
+                                              <>
+                                                {passKey.Name}
+                                              </>
                                             )}
-                                        </>
-                                      </div>
-                                    </CardDescription>
-                                  </Card>
-                                ))}
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </>
-                  )
-                  : <Label className="text-red-600">PassKeys are not supported on your device</Label>}
-              </>
-            )
-            : null}
-        </>
-      )}
-    </>
+                                        </CardTitle>
+                                      </CardHeader>
+
+                                      <CardDescription className="flex flex-col justify-center ml-4 gap-2">
+                                        <p className="truncate">
+                                          {passKey.PassKeyID}
+                                        </p>
+                                        <div className="flex gap-2 mt-2">
+                                          <Button
+                                            className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-800"
+                                            onClick={async () => {
+                                              authApi.interceptors.request.use(checkAccessToken);
+                                              try {
+                                                await authApi.post("/passkeys/delete", {
+                                                  "passKeyID": passKey.PassKeyID,
+                                                });
+                                              } catch (error) {
+                                                const err = error as AxiosError<{
+                                                  status: Errs;
+                                                }>;
+                                                switch (err.response?.data.status) {
+                                                  case "passkey_with_the_given_id_is_not_found":
+                                                    toast.error("PassKey with the given ID is not found");
+                                                    break;
+                                                  default:
+                                                    toast.error("Something went wrong");
+                                                }
+                                              }
+
+                                              await refetchPassKeys();
+                                            }}
+                                          >
+                                            <BsTrash /> Delete
+                                          </Button>
+                                          <>
+                                            {editingPassKey === passKey.PassKeyID
+                                              ? (
+                                                <Button
+                                                  className="flex items-center justify-center gap-2"
+                                                  onClick={async () => {
+                                                    setEditingPassKey(undefined);
+                                                    if (passKey.Name === passKeyName) {
+                                                      return;
+                                                    }
+
+                                                    authApi.interceptors.request.use(checkAccessToken);
+                                                    try {
+                                                      await authApi.post<{
+                                                        status: Errs;
+                                                      }>("/passkeys/edit", {
+                                                        "passKeyID": passKey.PassKeyID,
+                                                        "newName": passKeyName,
+                                                      });
+                                                    } catch (error) {
+                                                      const err = error as AxiosError<{
+                                                        status: Errs;
+                                                      }>;
+                                                      switch (err.response?.data.status) {
+                                                        case "passkey_with_the_given_id_is_not_found":
+                                                          toast.error("PassKey with the given ID is not found");
+                                                          break;
+                                                        default:
+                                                          toast.error("Something went wrong");
+                                                      }
+                                                    }
+
+                                                    await refetchPassKeys();
+                                                  }}
+                                                >
+                                                  <BsSave /> Save
+                                                </Button>
+                                              )
+                                              : (
+                                                <Button
+                                                  className="flex items-center justify-center gap-2"
+                                                  onClick={() => setEditingPassKey(passKey.PassKeyID)}
+                                                >
+                                                  <BsPencil /> Edit
+                                                </Button>
+                                              )}
+                                          </>
+                                        </div>
+                                      </CardDescription>
+                                    </Card>
+                                  ))}
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </>
+                    )
+                    : <Label className="text-red-600">PassKeys are not supported on your device</Label>}
+                </>
+              )
+              : null}
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 }
