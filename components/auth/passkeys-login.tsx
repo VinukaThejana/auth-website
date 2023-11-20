@@ -40,6 +40,7 @@ export default function PassKeys() {
         authApi.post("/passkeys/login", {
           "cred": cred,
         });
+
         router.push("/");
       } catch (error) {
         const err = error as AxiosError<{
