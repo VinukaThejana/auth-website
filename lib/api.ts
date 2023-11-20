@@ -1,6 +1,8 @@
-import axios, { InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { browser } from "process";
 import { toast } from "sonner";
-import { getCookie } from "./utils";
+import { Errs } from "~/types/errors";
+import { deleteCookie, getCookie } from "./utils";
 
 const baseURL = "http://localhost:8080";
 
@@ -14,8 +16,20 @@ export const checkAccessToken = async (config: InternalAxiosRequestConfig): Prom
         withCredentials: true,
       });
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      const err = error as AxiosError<{
+        status: Errs;
+      }>;
+      switch (err.response?.data.status) {
+        case "refresh_token_expired":
+          toast.error("Unauthorized");
+          break;
+        default:
+          toast.error("Something went wrong");
+      }
+
+      deleteCookie("session");
+      window.location.href = "/";
+      throw AxiosError;
     }
   }
 
