@@ -169,10 +169,8 @@ export default function PassKeys() {
                     ? (
                       <>
                         <AlertDialog>
-                          <AlertDialogTrigger>
-                            <Button>
-                              Generate PassKey
-                            </Button>
+                          <AlertDialogTrigger className="bg-black text-white p-4 rounded-lg font-bold">
+                            Generate PassKey
                           </AlertDialogTrigger>
 
                           <AlertDialogContent>
@@ -246,7 +244,7 @@ export default function PassKeys() {
                                         </CardTitle>
                                       </CardHeader>
 
-                                      <CardDescription className="flex flex-col justify-center ml-4 gap-2">
+                                      <div className="flex flex-col justify-center ml-4 gap-2">
                                         <p className="truncate">
                                           {passKey.PassKeyID}
                                         </p>
@@ -325,7 +323,7 @@ export default function PassKeys() {
                                               )}
                                           </>
                                         </div>
-                                      </CardDescription>
+                                      </div>
                                     </Card>
                                   ))}
                                 </div>
