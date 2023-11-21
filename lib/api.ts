@@ -47,4 +47,5 @@ export const checkApi = axios.create({
 
 export const userApi = axios.create({
   baseURL: `${baseURL}/user`,
+  withCredentials: true,
 });
