@@ -4,7 +4,9 @@ export type SessionToken = {
   LoginAt: string;
   IPAddress: string;
   Location: string;
-  Device: string;
-  OS: string;
+  DeviceVendor: string;
+  DeviceModel: string;
+  OSName: string;
+  OSVersion: string;
   ExpiresAt: number;
 };
