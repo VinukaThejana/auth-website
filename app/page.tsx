@@ -1,8 +1,10 @@
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Devices } from "~/components/user/devices";
 
 const PassKey = dynamic(() => import("~/components/auth/passkeys-register"), {
+  ssr: false,
+});
+const Devices = dynamic(() => import("~/components/user/devices"), {
   ssr: false,
 });
 
