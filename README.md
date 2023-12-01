@@ -15,20 +15,17 @@ This is a frontend to the Auth server repo, This repo demostrates how the Auth s
 ```bash
 bun install
 bun run dev
-
 ```
 
 - From pnpm
 ```bash
 pnpm install
 pnpm dev
-
+```
 
 - From npm
 ```bash
 npm install
 npm run dev
-
-```
 ```
 
