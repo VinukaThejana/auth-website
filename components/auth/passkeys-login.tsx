@@ -37,7 +37,7 @@ export default function PassKeys() {
       });
 
       try {
-        authApi.post("/passkeys/login", {
+        await authApi.post("/passkeys/login", {
           "cred": cred,
         });
 
