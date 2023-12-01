@@ -25,9 +25,9 @@
     "jose": "^5.1.1",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.289.0",
-    "next": "13.5.6",
-    "react": "^18",
-    "react-dom": "^18",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
     "react-hook-form": "^7.47.0",
     "react-icons": "^4.11.0",
     "sonner": "^1.0.3",
@@ -44,6 +44,6 @@
     "postcss": "^8",
     "tailwindcss": "^3",
     "eslint": "^8",
-    "eslint-config-next": "13.5.6"
+    "eslint-config-next": "latest"
   }
 }
