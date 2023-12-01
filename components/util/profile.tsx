@@ -2,15 +2,16 @@
 
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { authApi, checkAccessToken } from "~/lib/api";
 import { getUser } from "~/lib/user";
 import { Errs } from "~/types/errors";
 import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 
 export default function Profile() {
   const user = getUser();
   const router = useRouter();
+  const { toast } = useToast();
 
   return user
     ? (
@@ -28,7 +29,10 @@ export default function Profile() {
               status: Errs;
             }>;
             console.error(err.response?.data.status);
-            toast.error("something went wrong");
+            toast({
+              title: "Failed",
+              description: "Something went wrong",
+            });
           }
         }}
       />

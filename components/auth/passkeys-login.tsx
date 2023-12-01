@@ -5,14 +5,16 @@ import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BsKey } from "react-icons/bs";
-import { toast } from "sonner";
 import { authApi } from "~/lib/api";
 import { checkAvailablity } from "~/lib/passkeys";
 import { Errs } from "~/types/errors";
 import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 
 export default function PassKeys() {
   const router = useRouter();
+  const { toast } = useToast();
+
   const [support, setSupport] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -48,15 +50,24 @@ export default function PassKeys() {
         }>;
         switch (err.response?.data.status) {
           case "passkey_cannot_be_verified":
-            toast.error("PassKey cannot be verified");
+            toast({
+              title: "Failed",
+              description: "Passkey cannot be verified",
+            });
             break;
           default:
-            toast.error("Something went wrong");
+            toast({
+              title: "Failed",
+              description: "Something went wrong",
+            });
         }
       }
     } catch (error) {
       console.error(error);
-      toast.error("PassKey creation failed");
+      toast({
+        title: "Failed",
+        description: "Passkey creation failed",
+      });
     }
   };
 

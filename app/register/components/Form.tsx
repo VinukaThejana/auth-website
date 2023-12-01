@@ -1,177 +1,194 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { cn } from "~/lib/utils"
-import { Icons } from "~/components/ui/icons"
-import { Button } from "~/components/ui/button"
-import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
-import { z } from "zod"
-import { BsUnlock, BsLock } from "react-icons/bs"
-import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai"
-import { useForm, useFormState } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { FormError } from "~/components/util/form-error"
-import debounce from "lodash.debounce"
-import { schema } from "../utils/schema"
-import { authApi, checkApi } from "~/lib/api"
-import { toast } from "sonner"
-import { AxiosError } from "axios"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import debounce from "lodash.debounce";
+import * as React from "react";
+import { useForm, useFormState } from "react-hook-form";
+import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
+import { BsLock, BsUnlock } from "react-icons/bs";
+import { z } from "zod";
+import { Button } from "~/components/ui/button";
+import { Icons } from "~/components/ui/icons";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { useToast } from "~/components/ui/use-toast";
+import { FormError } from "~/components/util/form-error";
+import { authApi, checkApi } from "~/lib/api";
+import { cn } from "~/lib/utils";
+import { schema } from "../utils/schema";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 type UsernameStartValidation = {
-  type: 'start_validation'
-}
+  type: "start_validation";
+};
 type UsernameIsValid = {
-  type: 'is_valid'
-}
+  type: "is_valid";
+};
 type UsernameIsNotValid = {
-  type: 'is_not_valid'
-}
+  type: "is_not_valid";
+};
 
-type UsernameAppAction = UsernameStartValidation | UsernameIsValid | UsernameIsNotValid
+type UsernameAppAction = UsernameStartValidation | UsernameIsValid | UsernameIsNotValid;
 type UsernameAppState = {
-  isValidating: boolean
-  isValid: boolean
-}
+  isValidating: boolean;
+  isValid: boolean;
+};
 
 const usernameReducerFn = (state: UsernameAppState, action: UsernameAppAction) => {
   switch (action.type) {
     case "start_validation":
       return {
         isValidating: true,
-        isValid: false
-      }
+        isValid: false,
+      };
     case "is_valid":
       return {
         isValidating: false,
-        isValid: true
-      }
+        isValid: true,
+      };
     case "is_not_valid":
       return {
         isValidating: false,
-        isValid: false
-      }
+        isValid: false,
+      };
     default:
-      return state
+      return state;
   }
-}
+};
 
 export function RegisterForm({ className, ...props }: UserAuthFormProps) {
-  const [isPasswordVisible, setPasswordVisible] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isPasswordVisible, setPasswordVisible] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const [usernameState, usernameDispatch] = React.useReducer(usernameReducerFn, {
     isValidating: false,
-    isValid: false
-  })
+    isValid: false,
+  });
 
-  const { register, handleSubmit, formState, watch, control, setError, reset, clearErrors } = useForm<z.infer<typeof schema>>({
+  const { register, handleSubmit, formState, watch, control, setError, reset, clearErrors } = useForm<
+    z.infer<typeof schema>
+  >({
     resolver: zodResolver(schema),
     defaultValues: {
-      username: ""
-    }
-  })
-  const { errors } = formState
+      username: "",
+    },
+  });
+  const { errors } = formState;
   const { dirtyFields } = useFormState({
-    control
-  })
+    control,
+  });
 
-  const username = watch("username")
+  const { toast } = useToast();
+
+  const username = watch("username");
 
   const checkUsername = React.useCallback(
     debounce(async (username: string) => {
       if (username.length === 0) {
-        clearErrors("username")
-        return
+        clearErrors("username");
+        return;
       }
       if (!(username.length >= 3 && username.length <= 15)) {
-        return
+        return;
       }
       if (errors.username && errors.username.message !== undefined) {
-        return
+        return;
       }
 
-      clearErrors("username")
+      clearErrors("username");
       usernameDispatch({
-        type: "start_validation"
-      })
+        type: "start_validation",
+      });
 
       try {
         const payload = await checkApi.post<{
           status: string;
-          is_available: boolean
+          is_available: boolean;
         }>("/username", {
-          "username": username
-        })
+          "username": username,
+        });
 
         if (payload.data.is_available) {
           usernameDispatch({
-            type: "is_valid"
-          })
-          clearErrors("username")
+            type: "is_valid",
+          });
+          clearErrors("username");
         } else {
           usernameDispatch({
-            type: "is_not_valid"
-          })
+            type: "is_not_valid",
+          });
           dirtyFields.username && setError("username", {
             type: "custom",
-            message: "Already used"
-          })
+            message: "Already used",
+          });
         }
-
       } catch (error) {
-        console.error(error)
+        console.error(error);
         usernameDispatch({
-          type: "is_not_valid"
-        })
+          type: "is_not_valid",
+        });
         dirtyFields.username && setError("username", {
           type: "custom",
-          message: "Try again ... "
-        })
+          message: "Try again ... ",
+        });
       }
     }, 500),
-    []
-  )
+    [],
+  );
 
   React.useEffect(() => {
-    checkUsername(username)
-  }, [username])
+    checkUsername(username);
+  }, [username]);
 
   async function onSubmit(values: z.infer<typeof schema>) {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       await authApi.post<{
-        status: string
+        status: string;
       }>("/register", {
         "name": values.name,
         "username": values.username,
         "email": values.email,
         "password": values.password,
-      })
+      });
 
-      toast.success("Account created successfully")
-      reset()
+      toast({
+        title: "Success",
+        description: "Account created successfully",
+      });
+      reset();
     } catch (error) {
       const err = error as AxiosError<{
-        status: string
-      }>
-      console.error(err)
+        status: string;
+      }>;
+      console.error(err);
 
       switch (err.response?.data.status) {
         case "email_already_used":
-          toast.error("Email already used")
-          break
+          toast({
+            title: "Email already used",
+            description:
+              "The email address you entered is already being used, please login with that email address or create another account with a new one",
+          });
+          break;
         case "username_already_used":
-          toast.error("Username already used")
-          break
+          toast({
+            title: "Username already used",
+            description:
+              "The username you entered is already being used, please login with that username or create another account with a new one",
+          });
+          break;
         default:
-          toast.error("Something went wrong")
-          break
+          toast({
+            title: "Failed",
+            description: "Something went wrong",
+          });
+          break;
       }
     }
-    setIsLoading(false)
+    setIsLoading(false);
   }
 
   return (
@@ -210,18 +227,10 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
                 className="col-span-4"
                 {...register("username")}
               />
-              <span
-                className="border border-slate-200 rounded-lg inline-flex items-center justify-center col-span-1"
-              >
-                {usernameState.isValidating ? (
-                  <Icons.spinner className="h-4 w-4 animate-spin" />
-                ) : (
+              <span className="border border-slate-200 rounded-lg inline-flex items-center justify-center col-span-1">
+                {usernameState.isValidating ? <Icons.spinner className="h-4 w-4 animate-spin" /> : (
                   <>
-                    {usernameState.isValid ? (
-                      <AiOutlineCheckCircle />
-                    ) : (
-                      <AiOutlineCloseCircle />
-                    )}
+                    {usernameState.isValid ? <AiOutlineCheckCircle /> : <AiOutlineCloseCircle />}
                   </>
                 )}
               </span>
@@ -286,9 +295,7 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
             type="submit"
             disabled={isLoading || usernameState.isValidating || !usernameState.isValid || !formState.isValid}
           >
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
+            {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
             Sign In with Email
           </Button>
         </div>
@@ -304,13 +311,10 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
         </div>
       </div>
       <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Icons.gitHub className="mr-2 h-4 w-4" />
-        )}{" "}
-        Github
+        {isLoading
+          ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          : <Icons.gitHub className="mr-2 h-4 w-4" />} Github
       </Button>
     </div>
-  )
+  );
 }

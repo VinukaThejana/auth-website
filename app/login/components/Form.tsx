@@ -6,13 +6,13 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { BsLock, BsUnlock } from "react-icons/bs";
-import { toast } from "sonner";
 import { z } from "zod";
 import PassKeys from "~/components/auth/passkeys-login";
 import { Button } from "~/components/ui/button";
 import { Icons } from "~/components/ui/icons";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { useToast } from "~/components/ui/use-toast";
 import { FormError } from "~/components/util/form-error";
 import { authApi } from "~/lib/api";
 import { cn } from "~/lib/utils";
@@ -23,6 +23,7 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function LoginForm({ className, ...props }: UserAuthFormProps) {
   const router = useRouter();
+  const { toast } = useToast();
 
   const [isPasswordVisible, setPasswordVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -38,7 +39,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(values: z.infer<typeof schema>) {
     setIsLoading(true);
     try {
-      const res = await authApi.post<{
+      await authApi.post<{
         user: User;
         status: string;
       }>("/login", {
@@ -46,7 +47,9 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
         "password": values.password,
       });
 
-      toast.success("Logged in !");
+      toast({
+        title: "Logged in",
+      });
       router.push("/");
     } catch (error) {
       const err = error as AxiosError<{
@@ -56,9 +59,15 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
 
       switch (err.response?.data.status) {
         case "incorrect_credentials":
-          toast.error("Incorrect email or password");
+          toast({
+            title: "Failed",
+            description: "Incorrect credentials",
+          });
         default:
-          toast.error("Something went wrong");
+          toast({
+            title: "Failed",
+            description: "Something went wrong",
+          });
       }
     }
 

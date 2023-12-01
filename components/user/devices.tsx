@@ -1,15 +1,14 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Axios, AxiosError, AxiosResponse, AxiosResponseHeaders } from "axios";
-import { useRouter } from "next/navigation";
+import { AxiosError, AxiosResponse } from "axios";
 import { BsTrash } from "react-icons/bs";
-import { toast } from "sonner";
 import { authApi, checkAccessToken, checkApi, userApi } from "~/lib/api";
 import { Errs } from "~/types/errors";
 import { SessionToken } from "~/types/tokenSession";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { useToast } from "../ui/use-toast";
 
 export default function Devices() {
   const { data: devices, refetch: refetchDevices, isLoading: isFetchingDevices } = useQuery({
@@ -34,6 +33,8 @@ export default function Devices() {
       }
     },
   });
+
+  const { toast } = useToast();
 
   return (
     <Card className="w-80 sm:w-[700px] min-h-[300px]">
@@ -83,7 +84,10 @@ export default function Devices() {
                                 }>;
                                 // TODO: Handle ReAuthentication
                                 console.log(err.response?.data.status);
-                                toast.error("Something went wrong");
+                                toast({
+                                  title: "Under development",
+                                  description: "Add the reauthentication model",
+                                });
                               }
                             }}
                           >

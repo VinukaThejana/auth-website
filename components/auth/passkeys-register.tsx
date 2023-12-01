@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { BsPencil, BsSave, BsTrash } from "react-icons/bs";
-import { toast } from "sonner";
 import { z } from "zod";
 import { authApi, checkAccessToken } from "~/lib/api";
 import { checkAvailablity } from "~/lib/passkeys";
@@ -27,9 +26,11 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { useToast } from "../ui/use-toast";
 
 export default function PassKeys() {
   const user = getUser();
+  const { toast } = useToast();
 
   const [support, setSupport] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -59,6 +60,7 @@ export default function PassKeys() {
           status: Errs;
           passKeys: PassKey[];
         }>;
+
         if (!err.response) {
           return {
             passkeys: [],
@@ -122,33 +124,54 @@ export default function PassKeys() {
           "cred": cred,
         });
 
-        toast.success("PassKey created successfully !");
+        toast({
+          title: "Success",
+          description: "Passkey created successfully",
+        });
       } catch (error) {
         const err = error as AxiosError<{
           status: Errs;
         }>;
         if (!err.response) {
-          toast.error("PassKey creation failed");
+          toast({
+            title: "Failed",
+            description: "Passkey creation failed",
+          });
           return;
         }
 
         switch (err.response.data.status) {
           case "passkey_cannot_be_verified":
-            toast.error("PassKey cannot be verified");
+            toast({
+              title: "Failed",
+              description: "Passkey cannot be verified",
+            });
             break;
           case "passkey_already_created":
-            toast.error("PassKey has already been created");
+            toast({
+              title: "Failed",
+              description: "Passkey with the given ID already exisits",
+            });
             break;
           case "internal_server_error":
-            toast.error("Something went wrong");
+            toast({
+              title: "Failed",
+              description: "Something unexpected happened !",
+            });
             break;
           default:
-            toast.error("PassKey creation failed");
+            toast({
+              title: "Failed",
+              description: "Something went wrong",
+            });
         }
       }
     } catch (error) {
       console.error(error);
-      toast.error("PassKey creation failed");
+      toast({
+        title: "Failed",
+        description: "Passkey creation failed",
+      });
     }
   };
 
@@ -203,7 +226,10 @@ export default function PassKeys() {
                                     await refetchPassKeys();
                                     setPassKeyName("");
                                   } catch (error) {
-                                    toast.error("PassKey name is not valid");
+                                    toast({
+                                      title: "Failed",
+                                      description: "Name given to the passkey is not valid",
+                                    });
                                   }
                                 }}
                               >
@@ -263,10 +289,16 @@ export default function PassKeys() {
                                                 }>;
                                                 switch (err.response?.data.status) {
                                                   case "passkey_with_the_given_id_is_not_found":
-                                                    toast.error("PassKey with the given ID is not found");
+                                                    toast({
+                                                      title: "Cannot be found",
+                                                      description: "Passkey with the given name cannot be found",
+                                                    });
                                                     break;
                                                   default:
-                                                    toast.error("Something went wrong");
+                                                    toast({
+                                                      title: "Failed",
+                                                      description: "Something went wrong",
+                                                    });
                                                 }
                                               }
 
@@ -282,7 +314,7 @@ export default function PassKeys() {
                                                   className="flex items-center justify-center gap-2"
                                                   onClick={async () => {
                                                     setEditingPassKey(undefined);
-                                                    if (passKey.Name === passKeyName) {
+                                                    if (passKey.Name === passKeyName || !passKeyName) {
                                                       return;
                                                     }
 
@@ -300,10 +332,16 @@ export default function PassKeys() {
                                                       }>;
                                                       switch (err.response?.data.status) {
                                                         case "passkey_with_the_given_id_is_not_found":
-                                                          toast.error("PassKey with the given ID is not found");
+                                                          toast({
+                                                            title: "Cannot be found",
+                                                            description: "Passkey with the given name cannot be found",
+                                                          });
                                                           break;
                                                         default:
-                                                          toast.error("Something went wrong");
+                                                          toast({
+                                                            title: "Failed",
+                                                            description: "Something went wrong",
+                                                          });
                                                       }
                                                     }
 

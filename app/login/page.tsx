@@ -1,11 +1,6 @@
 import { Metadata } from "next";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { LoginForm } from "./components/Form";
-
-const PassKey = dynamic(() => import("~/components/auth/passkeys-login"), {
-  ssr: false,
-});
 
 export const metadata: Metadata = {
   title: "Login | Authentication",
