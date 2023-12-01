@@ -2,13 +2,22 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
+import dynamic from "next/dynamic";
+import { resolve } from "path";
+import { useRef, useState } from "react";
 import { BsTrash } from "react-icons/bs";
-import { authApi, checkAccessToken, checkApi, userApi } from "~/lib/api";
+import ReAuthenticate from "~/components/auth/reauthenticate-modal";
+import { checkAccessToken, userApi } from "~/lib/api";
 import { Errs } from "~/types/errors";
 import { SessionToken } from "~/types/tokenSession";
+import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { useToast } from "../ui/use-toast";
+
+const ReAuthenticateModal = dynamic(() => import("~/components/auth/reauthenticate-modal"), {
+  ssr: false,
+});
 
 export default function Devices() {
   const { data: devices, refetch: refetchDevices, isLoading: isFetchingDevices } = useQuery({
@@ -35,75 +44,102 @@ export default function Devices() {
   });
 
   const { toast } = useToast();
+  const reAuthenticateTrigger = useRef<
+    HTMLButtonElement | null
+  >(null);
+  const [removeDeviceID, setRemoveDeviceID] = useState<string | null>(null);
 
   return (
-    <Card className="w-80 sm:w-[700px] min-h-[300px]">
-      <CardHeader>
-        <CardTitle>Devices</CardTitle>
-        <CardDescription>List of all the logged in devices</CardDescription>
-      </CardHeader>
+    <>
+      <Card className="w-80 sm:w-[700px] min-h-[300px]">
+        <CardHeader>
+          <CardTitle>Devices</CardTitle>
+          <CardDescription>List of all the logged in devices</CardDescription>
+        </CardHeader>
 
-      <CardContent className="flex flex-col">
-        {!isFetchingDevices
-          ? (
-            <>
-              {devices
-                ? (
-                  <div className="flex flex-col gap-4">
-                    {devices.map((device) => (
-                      <Card
-                        key={device.ID}
-                        className="w-96"
-                      >
-                        <CardHeader>
-                          <CardTitle>
-                            {device.DeviceVendor} ({device.DeviceModel})
-                          </CardTitle>
-                        </CardHeader>
+        <CardContent className="flex flex-col">
+          {!isFetchingDevices
+            ? (
+              <>
+                {devices
+                  ? (
+                    <div className="flex flex-col gap-4">
+                      {devices.map((device) => (
+                        <Card
+                          key={device.ID}
+                          className="w-96"
+                        >
+                          <CardHeader>
+                            <CardTitle>
+                              {device.DeviceVendor} ({device.DeviceModel})
+                            </CardTitle>
+                          </CardHeader>
 
-                        <CardDescription className="flex flex-col p-4 gap-4">
-                          <p className="flex flex-col gap-1">
-                            <span>
-                              OS : {device.OSName}
-                            </span>
-                            <span>
-                              Version : {device.OSVersion}
-                            </span>
-                          </p>
-                          <Button
-                            className="flex items-center justify-center gap-1 flex-row-reverse bg-red-600 hover:bg-red-700 w-56"
-                            onClick={async () => {
-                              try {
-                                userApi.interceptors.request.use(checkAccessToken);
-                                await userApi.post("/devices/remove", {
-                                  "id": device.ID,
-                                });
-                              } catch (error) {
-                                const err = error as AxiosError<{
-                                  status: Errs;
-                                }>;
-                                // TODO: Handle ReAuthentication
-                                console.log(err.response?.data.status);
-                                toast({
-                                  title: "Under development",
-                                  description: "Add the reauthentication model",
-                                });
-                              }
-                            }}
-                          >
-                            Logout from device
-                            <BsTrash />
-                          </Button>
-                        </CardDescription>
-                      </Card>
-                    ))}
-                  </div>
-                )
-                : null}
-            </>
-          )
-          : null}
-      </CardContent>
-    </Card>
+                          <CardDescription className="flex flex-col p-4 gap-4">
+                            <p className="flex flex-col gap-1">
+                              <span>
+                                OS : {device.OSName}
+                              </span>
+                              <span>
+                                Version : {device.OSVersion}
+                              </span>
+                            </p>
+                            <Button
+                              className="flex items-center justify-center gap-1 flex-row-reverse bg-red-600 hover:bg-red-700 w-56"
+                              onClick={async () => {
+                                try {
+                                  userApi.interceptors.request.use(checkAccessToken);
+                                  await userApi.post("/devices/remove", {
+                                    "id": device.ID,
+                                  });
+
+                                  await refetchDevices();
+                                } catch (error) {
+                                  const err = error as AxiosError<{
+                                    status: Errs;
+                                  }>;
+                                  if (err.response?.data.status !== "reauth_token_not_present") {
+                                    console.error(err.response?.data.status);
+                                    toast({
+                                      title: "Failed",
+                                      description: "Something went wrong",
+                                    });
+                                  }
+
+                                  setRemoveDeviceID(device.ID);
+                                  reAuthenticateTrigger.current?.click();
+                                }
+                              }}
+                            >
+                              Logout from device
+                              <BsTrash />
+                            </Button>
+                          </CardDescription>
+                        </Card>
+                      ))}
+                    </div>
+                  )
+                  : null}
+              </>
+            )
+            : null}
+        </CardContent>
+      </Card>
+
+      <div>
+        <AlertDialog>
+          <AlertDialogTrigger
+            ref={reAuthenticateTrigger}
+          >
+          </AlertDialogTrigger>
+
+          <ReAuthenticate
+            deviceID={removeDeviceID}
+            refetchDevices={refetchDevices}
+            trigger={reAuthenticateTrigger}
+          />
+        </AlertDialog>
+      </div>
+    </>
   );
 }
