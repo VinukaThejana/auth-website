@@ -27,6 +27,7 @@
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.289.0",
     "next": "latest",
+    "next-qrcode": "^2.5.1",
     "react": "latest",
     "react-dom": "latest",
     "react-hook-form": "^7.47.0",
