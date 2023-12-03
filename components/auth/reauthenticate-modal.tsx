@@ -27,7 +27,7 @@ import {
   AlertDialogHeader,
 } from "../ui/alert-dialog";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ReAuthenticateProps extends React.HTMLAttributes<HTMLDivElement> {
   trigger: React.MutableRefObject<HTMLButtonElement | null>;
   deviceID: string | null;
   refetchDevices: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<SessionToken[], Error>>;
@@ -40,7 +40,7 @@ export const schema = z.object({
     }),
 });
 
-export default function ReAuthenticate({ className, ...props }: UserAuthFormProps) {
+export default function ReAuthenticate({ className, ...props }: ReAuthenticateProps) {
   const { toast } = useToast();
 
   const [isPasswordVisible, setPasswordVisible] = React.useState(false);
@@ -145,7 +145,11 @@ export default function ReAuthenticate({ className, ...props }: UserAuthFormProp
               </div>
             </form>
 
-            <PassKeys />
+            <PassKeys
+              refetchDevices={props.refetchDevices}
+              trigger={props.trigger}
+              deviceID={props.deviceID}
+            />
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

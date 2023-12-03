@@ -1,17 +1,25 @@
 "use client";
 
 import { get } from "@github/webauthn-json";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BsKey } from "react-icons/bs";
-import { authApi } from "~/lib/api";
+import { authApi, checkAccessToken, userApi } from "~/lib/api";
 import { checkAvailablity } from "~/lib/passkeys";
 import { Errs } from "~/types/errors";
+import { SessionToken } from "~/types/tokenSession";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 
-export default function PassKeys() {
+interface ReAuthenticateProps extends React.HTMLAttributes<HTMLDivElement> {
+  trigger: React.MutableRefObject<HTMLButtonElement | null>;
+  deviceID: string | null;
+  refetchDevices: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<SessionToken[], Error>>;
+}
+
+export default function PassKeys({ className, ...props }: ReAuthenticateProps) {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -39,11 +47,25 @@ export default function PassKeys() {
       });
 
       try {
-        await authApi.post("/passkeys/login", {
+        authApi.interceptors.request.use(checkAccessToken);
+        await authApi.post("/reauthenticate/passkey", {
           "cred": cred,
         });
 
-        router.push("/");
+        try {
+          userApi.interceptors.request.use(checkAccessToken);
+          await userApi.post("/devices/remove", {
+            "id": props.deviceID,
+          });
+
+          await props.refetchDevices();
+          props.trigger.current?.click();
+        } catch (error) {
+          toast({
+            title: "Failed",
+            description: "Failed to confirm your action",
+          });
+        }
       } catch (error) {
         const err = error as AxiosError<{
           status: Errs;
