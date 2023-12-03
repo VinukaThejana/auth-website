@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 
 const PassKey = dynamic(() => import("~/components/auth/passkeys-register"), {
   ssr: false,
@@ -7,14 +6,15 @@ const PassKey = dynamic(() => import("~/components/auth/passkeys-register"), {
 const Devices = dynamic(() => import("~/components/user/devices"), {
   ssr: false,
 });
+const TwoFactor = dynamic(() => import("~/components/user/twofactor"), {
+  ssr: false,
+});
 
 export default function Home() {
   return (
     <main className="flex flex-col items-center  min-h-screen mt-10 gap-4">
-      {/* PassKeys */}
       <PassKey />
-
-      {/* User devices */}
+      <TwoFactor />
       <Devices />
     </main>
   );

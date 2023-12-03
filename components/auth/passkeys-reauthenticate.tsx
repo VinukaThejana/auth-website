@@ -6,17 +6,16 @@ import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BsKey } from "react-icons/bs";
-import { authApi, checkAccessToken, userApi } from "~/lib/api";
+import { authApi, checkAccessToken } from "~/lib/api";
 import { checkAvailablity } from "~/lib/passkeys";
 import { Errs } from "~/types/errors";
-import { SessionToken } from "~/types/tokenSession";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 
 interface ReAuthenticateProps extends React.HTMLAttributes<HTMLDivElement> {
   trigger: React.MutableRefObject<HTMLButtonElement | null>;
-  deviceID: string | null;
-  refetchDevices: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<SessionToken[], Error>>;
+  bussinessLogic: () => Promise<void>;
+  refetchFns?: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<any, Error>>;
 }
 
 export default function PassKeys({ className, ...props }: ReAuthenticateProps) {
@@ -53,12 +52,11 @@ export default function PassKeys({ className, ...props }: ReAuthenticateProps) {
         });
 
         try {
-          userApi.interceptors.request.use(checkAccessToken);
-          await userApi.post("/devices/remove", {
-            "id": props.deviceID,
-          });
+          await props.bussinessLogic();
+          if (props.refetchFns) {
+            await props.refetchFns();
+          }
 
-          await props.refetchDevices();
           props.trigger.current?.click();
         } catch (error) {
           toast({

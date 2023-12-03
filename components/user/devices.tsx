@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import { resolve } from "path";
 import { useRef, useState } from "react";
 import { BsTrash } from "react-icons/bs";
-import ReAuthenticate from "~/components/auth/reauthenticate-modal";
 import { checkAccessToken, userApi } from "~/lib/api";
 import { Errs } from "~/types/errors";
 import { SessionToken } from "~/types/tokenSession";
@@ -15,7 +14,7 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { useToast } from "../ui/use-toast";
 
-const ReAuthenticateModal = dynamic(() => import("~/components/auth/reauthenticate-modal"), {
+const ReAuthenticate = dynamic(() => import("~/components/auth/reauthenticate-modal"), {
   ssr: false,
 });
 
@@ -134,9 +133,14 @@ export default function Devices() {
           </AlertDialogTrigger>
 
           <ReAuthenticate
-            deviceID={removeDeviceID}
-            refetchDevices={refetchDevices}
             trigger={reAuthenticateTrigger}
+            bussinessLogic={async () => {
+              userApi.interceptors.request.use(checkAccessToken);
+              await userApi.post("/devices/remove", {
+                "id": removeDeviceID,
+              });
+            }}
+            refetchFns={refetchDevices}
           />
         </AlertDialog>
       </div>
