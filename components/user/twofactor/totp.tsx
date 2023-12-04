@@ -300,7 +300,7 @@ export default function TOTP() {
                         status: Errs;
                         memonic_phrase: string;
                       }>("/otp/verify", {
-                        "code": JSON.stringify(code),
+                        "code": code,
                       });
 
                       setMemonicPhrase(res.data.memonic_phrase);
@@ -317,6 +317,7 @@ export default function TOTP() {
                           title: "Invalid",
                           description: "The OTP code you entered is not valid",
                         });
+                        return;
                       } else {
                         toast({
                           title: "Failed",
