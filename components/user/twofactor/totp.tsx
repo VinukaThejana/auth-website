@@ -43,7 +43,7 @@ export default function TOTP() {
     } | null
   >(null);
   const [stage, setStage] = useState<"1" | "2" | "3">("1");
-  const [code, setCode] = useState<number>(0);
+  const [code, setCode] = useState("");
   const [memonicPhrase, setMemonicPhrase] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -242,10 +242,10 @@ export default function TOTP() {
                       Enter the code
                     </Label>
                     <Input
-                      type="number"
-                      placeholder="123456"
+                      type="text"
+                      placeholder="123-456"
                       value={code}
-                      onChange={(e) => setCode(parseInt(e.currentTarget.value))}
+                      onChange={(e) => setCode(e.currentTarget.value)}
                     />
                   </>
                 )
