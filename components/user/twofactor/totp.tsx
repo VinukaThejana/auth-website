@@ -4,9 +4,6 @@ import { AxiosError } from "axios";
 import { useQRCode } from "next-qrcode";
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
-import { authApi, checkAccessToken } from "~/lib/api";
-import { getUser } from "~/lib/user";
-import { Errs } from "~/types/errors";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -15,18 +12,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { useToast } from "../ui/use-toast";
+} from "~/components/ui/alert-dialog";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { useToast } from "~/components/ui/use-toast";
+import { authApi, checkAccessToken } from "~/lib/api";
+import { getUser } from "~/lib/user";
+import { Errs } from "~/types/errors";
 
 const ReAuthenticate = dynamic(() => import("~/components/auth/reauthenticate-modal"), {
   ssr: false,
 });
 
-export default function TwoFactor() {
+export default function TOTP() {
   let user = getUser();
   const { toast } = useToast();
   const reAuthenticateTrigger = useRef<
@@ -66,14 +66,15 @@ export default function TwoFactor() {
 
   return (
     <>
-      <Card className="w-80 sm:w-[700px] min-h-[200px]">
+      <Card className="w-80 sm:w-[600px] min-h-[200px] mt-4">
         <CardHeader>
           <CardTitle>
-            Two factor authentication
+            Time based 2 factor authentication
           </CardTitle>
 
           <CardDescription>
-            Secure your account by enabling two facor authentication
+            Enable time based 2 factor authentication by using a third party authenticator app such as Google
+            Authenticator, Authy or 1Password
           </CardDescription>
         </CardHeader>
 
@@ -160,7 +161,7 @@ export default function TwoFactor() {
                         }
                       }}
                     >
-                      Reset Two factor authentication
+                      Reset
                     </Button>
                   </div>
                 )
@@ -328,7 +329,7 @@ export default function TwoFactor() {
                   }
                   toast({
                     title: "Verified",
-                    description: "Two factor authentication is enabled and verified",
+                    description: "Enabled TOTP 2 factor authentication",
                   });
                   totpTrigger.current?.click();
                   setStage("1");

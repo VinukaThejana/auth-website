@@ -6,7 +6,7 @@ const PassKey = dynamic(() => import("~/components/auth/passkeys-register"), {
 const Devices = dynamic(() => import("~/components/user/devices"), {
   ssr: false,
 });
-const TwoFactor = dynamic(() => import("~/components/user/twofactor"), {
+const TwoFactor = dynamic(() => import("~/components/user/twofactor/twofactor"), {
   ssr: false,
 });
 
