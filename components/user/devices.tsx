@@ -75,14 +75,14 @@ export default function Devices() {
                           </CardHeader>
 
                           <CardDescription className="flex flex-col p-4 gap-4">
-                            <p className="flex flex-col gap-1">
+                            <span className="flex flex-col gap-1">
                               <span>
                                 OS : {device.OSName}
                               </span>
                               <span>
                                 Version : {device.OSVersion}
                               </span>
-                            </p>
+                            </span>
                             <Button
                               className="flex items-center justify-center gap-1 flex-row-reverse bg-red-600 hover:bg-red-700 w-56"
                               onClick={async () => {
