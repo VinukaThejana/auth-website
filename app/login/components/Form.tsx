@@ -7,6 +7,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { BsLock, BsUnlock } from "react-icons/bs";
 import { z } from "zod";
+import { OAuthProviders } from "~/components/auth/oauth";
 import PassKeys from "~/components/auth/passkeys-login";
 import { Button } from "~/components/ui/button";
 import { Icons } from "~/components/ui/icons";
@@ -224,11 +225,9 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading
-          ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          : <Icons.gitHub className="mr-2 h-4 w-4" />} Github
-      </Button>
+      <OAuthProviders
+        isLoading={isLoading}
+      />
     </div>
   );
 }

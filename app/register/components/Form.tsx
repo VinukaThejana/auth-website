@@ -8,6 +8,7 @@ import { useForm, useFormState } from "react-hook-form";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import { BsLock, BsUnlock } from "react-icons/bs";
 import { z } from "zod";
+import { OAuthProviders } from "~/components/auth/oauth";
 import { Button } from "~/components/ui/button";
 import { Icons } from "~/components/ui/icons";
 import { Input } from "~/components/ui/input";
@@ -310,11 +311,9 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading
-          ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-          : <Icons.gitHub className="mr-2 h-4 w-4" />} Github
-      </Button>
+      <OAuthProviders
+        isLoading={isLoading}
+      />
     </div>
   );
 }
