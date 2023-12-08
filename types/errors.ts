@@ -1,25 +1,30 @@
 export type Errs =
-  | "internal_server_error"
-  | "unauthorized"
-  | "access_token_not_provided"
-  | "bad_request"
-  | "incorrect_credentials"
-  | "refresh_token_expired"
-  | "refresh_token_not_provided"
-  | "access_token_expired"
-  | "username_already_used"
-  | "email_already_used"
-  | "email_confirmation_expired"
-  | "already_have_an_account"
-  | "no_account_with_email"
-  | "no_account_with_username"
-  | "add_a_username"
-  | "two_factor_verification_not_enabled"
-  | "otp_token_is_not_valid"
-  | "memonic_phrase_not_valid"
-  | "reauth_token_not_present"
-  | "verify_your_email_address_first"
-  | "token_expired"
-  | "passkey_cannot_be_verified"
-  | "passkey_already_created"
-  | "passkey_with_the_given_id_is_not_found";
+  "internal_server_error";
+"unauthorized";
+"access_token_not_provided";
+"bad_request";
+"incorrect_credentials";
+"refresh_token_expired";
+"refresh_token_not_provided";
+"access_token_expired";
+"username_already_used";
+"email_already_used";
+"email_confirmation_expired";
+"already_have_an_account";
+"no_account_with_email";
+"no_account_with_username";
+"add_a_username";
+"two_factor_verification_not_enabled";
+"continue_with_two_factor_authentication";
+"otp_token_is_not_valid";
+"memonic_phrase_not_valid";
+"reauth_token_not_present";
+"verify_your_email_address_first";
+"token_expired";
+"passkey_cannot_be_verified";
+"passkey_already_created";
+"passkey_with_the_given_id_is_not_found";
+"could_not_parse_access_token_from_oauth_provider";
+"could_not_parse_user_from_oauth_provider";
+"enter_a_new_username";
+"link_account_with_exsisting_email";
