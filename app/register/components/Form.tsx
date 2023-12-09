@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import debounce from "lodash.debounce";
-import * as React from "react";
 import { useForm, useFormState } from "react-hook-form";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import { BsLock, BsUnlock } from "react-icons/bs";
@@ -18,8 +17,9 @@ import { FormError } from "~/components/util/form-error";
 import { authApi, checkApi } from "~/lib/api";
 import { cn } from "~/lib/utils";
 import { schema } from "../utils/schema";
+import { useCallback, useEffect, useReducer, useState } from "react";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 type UsernameStartValidation = {
   type: "start_validation";
@@ -60,10 +60,10 @@ const usernameReducerFn = (state: UsernameAppState, action: UsernameAppAction) =
 };
 
 export function RegisterForm({ className, ...props }: UserAuthFormProps) {
-  const [isPasswordVisible, setPasswordVisible] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [usernameState, usernameDispatch] = React.useReducer(usernameReducerFn, {
+  const [usernameState, usernameDispatch] = useReducer(usernameReducerFn, {
     isValidating: false,
     isValid: false,
   });
@@ -85,7 +85,8 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
 
   const username = watch("username");
 
-  const checkUsername = React.useCallback(
+  // eslint-disable-next-line
+  const checkUsername = useCallback(
     debounce(async (username: string) => {
       if (username.length === 0) {
         clearErrors("username");
@@ -139,8 +140,9 @@ export function RegisterForm({ className, ...props }: UserAuthFormProps) {
     [],
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     checkUsername(username);
+    // eslint-disable-next-line
   }, [username]);
 
   async function onSubmit(values: z.infer<typeof schema>) {
