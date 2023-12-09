@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@github/webauthn-json": "^2.1.1",
+    "@headlessui/react": "^1.7.17",
     "@hookform/resolvers": "^3.3.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
