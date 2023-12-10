@@ -19,7 +19,7 @@ import { cn } from "~/lib/utils";
 import { Errs } from "~/types/errors";
 import { User } from "~/types/user";
 import { schema } from "../utils/schema";
-import { HTMLAttributes, useEffect, useState } from "react";
+import { HTMLAttributes, useState } from "react";
 
 interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> { }
 
@@ -33,7 +33,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [code, setCode] = useState("");
 
-  const { register, handleSubmit, formState, reset } = useForm<z.infer<typeof schema>>({
+  const { register, handleSubmit, formState } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       username: "",
