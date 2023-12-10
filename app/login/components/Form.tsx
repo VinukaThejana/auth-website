@@ -19,8 +19,6 @@ import { cn } from "~/lib/utils";
 import { Errs } from "~/types/errors";
 import { User } from "~/types/user";
 import { schema } from "../utils/schema";
-import { Dialog, Transition } from '@headlessui/react'
-import { AddNewUsernameOAuth } from "~/components/auth/new-username-modal";
 import { HTMLAttributes, useEffect, useState } from "react";
 
 interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> { }
@@ -69,14 +67,26 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
       const err = error as AxiosError<{
         status: string;
       }>;
-      console.error(err);
 
-      switch (err.response?.data.status) {
+      switch (err.response?.data.status as Errs) {
         case "incorrect_credentials":
           toast({
-            title: "Failed",
-            description: "Incorrect credentials",
+            title: "Incorrect credentials",
+            description: "The username or password that you used is not correct",
           });
+          break;
+        case "no_account_with_username":
+          toast({
+            title: "No account found",
+            description: "There is no account to be found with the given username"
+          })
+          break;
+        case "no_account_with_email":
+          toast({
+            title: "No account found",
+            description: "There is no account to be found with the given email address"
+          })
+          break;
         default:
           toast({
             title: "Failed",
@@ -85,7 +95,6 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
       }
     }
 
-    reset();
     setIsLoading(false);
   }
 
