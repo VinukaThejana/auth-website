@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { BsLock, BsUnlock } from "react-icons/bs";
 import { z } from "zod";
@@ -26,9 +26,6 @@ import { HTMLAttributes, useEffect, useState } from "react";
 interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> { }
 
 export function LoginForm({ className, ...props }: UserAuthFormProps) {
-  const searchParams = useSearchParams();
-  const state = searchParams.get('state');
-
   const router = useRouter();
   const { toast } = useToast();
 
@@ -37,29 +34,6 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
   const [user, setUser] = useState<User | null>(null);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [code, setCode] = useState("");
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (state !== null) {
-      switch (state as Errs) {
-        case "add_a_username":
-          setOpen(true);
-          break;
-        case "unauthorized":
-          toast({
-            title: "Failed",
-            description: "Failed to connect the account"
-          })
-          break;
-        default:
-          toast({
-            title: "Failed",
-            description: "Something went wrong",
-          })
-      }
-    }
-    // eslint-disable-next-line
-  }, [state])
 
   const { register, handleSubmit, formState, reset } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -258,11 +232,6 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
           isLoading={isLoading}
         />
       </div>
-
-      <AddNewUsernameOAuth
-        open={open}
-        setOpen={setOpen}
-      />
     </>
   );
 }

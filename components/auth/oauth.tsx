@@ -3,6 +3,7 @@
 import { Button } from "~/components/ui/button";
 import { Icons } from "~/components/ui/icons";
 import { BACKEND_URL } from "~/lib/utils";
+import { OAuthState } from "./oauth-state";
 
 export function OAuthProviders(props: {
   isLoading: boolean;
@@ -22,6 +23,8 @@ export function OAuthProviders(props: {
           ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
           : <Icons.gitHub className="mr-2 h-4 w-4" />} Github
       </Button>
+
+      <OAuthState />
     </>
   );
 }
