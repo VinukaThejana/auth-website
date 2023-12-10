@@ -5,12 +5,10 @@ import { useToast } from "~/components/ui/use-toast";
 import { useEffect, useState } from "react";
 import { Errs } from "~/types/errors";
 import { AddNewUsernameOAuth } from "./new-username-modal";
-import { title } from "process";
 
 export function OAuthState() {
   const searchParams = useSearchParams();
   const state = searchParams.get('state');
-
   const { toast } = useToast();
 
   const [open, setOpen] = useState(false);
