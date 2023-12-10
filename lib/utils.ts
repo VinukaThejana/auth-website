@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Providers as Provider } from "~/types/providers";
 
 export const BACKEND_URL = "http://localhost:8080";
 
@@ -40,4 +41,13 @@ export function binaryToBase64url(bytes: Uint8Array) {
 
 export function clean(str: string) {
   return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
+export function getFormalProviderName(provider: Provider): string {
+  switch (provider) {
+    case "github":
+      return "GitHub"
+    default:
+      return ""
+  }
 }
