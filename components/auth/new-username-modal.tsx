@@ -8,11 +8,15 @@ import { checkApi } from '~/lib/api';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { BACKEND_URL } from '~/lib/utils';
+import { useSearchParams } from 'next/navigation';
 
 export function AddNewUsernameOAuth(props: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const searchParams = useSearchParams();
+  const provider = searchParams.get('provider');
+
   const [usernameErr, setUsernameErr] = useState("");
   const [username, setUsername] = useState("");
 
@@ -121,11 +125,11 @@ export function AddNewUsernameOAuth(props: {
 
                   <Button
                     onClick={async () => {
-                      if (username === "") {
+                      if (username === "" || !provider) {
                         return
                       }
 
-                      window.location.href = `${BACKEND_URL}/oauth/github/redirect?username=${username}`;
+                      window.location.href = `${BACKEND_URL}/oauth/${provider}/redirect?username=${username}`;
                     }}
                   >
                     Proceed
@@ -139,4 +143,3 @@ export function AddNewUsernameOAuth(props: {
     </Transition>
   )
 }
-
