@@ -7,6 +7,7 @@ import { Button } from '~/components/ui/button';
 import { checkApi } from '~/lib/api';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { BACKEND_URL } from '~/lib/utils';
 
 export function AddNewUsernameOAuth(props: {
   open: boolean;
@@ -119,6 +120,13 @@ export function AddNewUsernameOAuth(props: {
                   </Button>
 
                   <Button
+                    onClick={async () => {
+                      if (username === "") {
+                        return
+                      }
+
+                      window.location.href = `${BACKEND_URL}/oauth/github/redirect?username=${username}`;
+                    }}
                   >
                     Proceed
                   </Button>
