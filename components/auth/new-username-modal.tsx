@@ -9,11 +9,14 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { BACKEND_URL } from '~/lib/utils';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export function AddNewUsernameOAuth(props: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const router = useRouter();
+
   const searchParams = useSearchParams();
   const provider = searchParams.get('provider');
 
@@ -118,7 +121,10 @@ export function AddNewUsernameOAuth(props: {
                 <div className="flex gap-2 mt-4 flex-row-reverse">
                   <Button
                     className='bg-red-600 hover:bg-red-700'
-                    onClick={() => closeModal()}
+                    onClick={() => {
+                      router.push(window.location.pathname);
+                      closeModal();
+                    }}
                   >
                     Dismiss
                   </Button>
