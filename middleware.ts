@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
       name: "ua",
       value: base64url.encode(JSON.stringify(ua)),
       path: "/",
-      maxAge: 10 * 60,
+      maxAge: 15 * 60 * 60 * 24,
       httpOnly: false,
     });
   }
