@@ -27,6 +27,11 @@ export const authApi = axios.create({
   withCredentials: true,
 });
 
+export const oauthApi = axios.create({
+  baseURL: `${baseURL}/oauth`,
+  withCredentials: true,
+})
+
 export const checkApi = axios.create({
   baseURL: `${baseURL}/check`,
 });
