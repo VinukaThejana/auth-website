@@ -135,7 +135,7 @@ export function AddNewUsernameOAuth(props: {
                         return
                       }
 
-                      window.location.href = `${BACKEND_URL}/oauth/${provider}/redirect?username=${username}`;
+                      window.location.href = `${BACKEND_URL}/oauth/${provider}/add/username/${username}`;
                     }}
                   >
                     Proceed
