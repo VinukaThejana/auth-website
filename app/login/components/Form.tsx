@@ -46,6 +46,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(values: z.infer<typeof schema>) {
     setIsLoading(true);
     try {
+      authApi.interceptors.request.clear();
       const res = await authApi.post<{
         user: User;
         status: string;

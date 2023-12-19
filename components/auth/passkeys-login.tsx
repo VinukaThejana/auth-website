@@ -26,6 +26,7 @@ export default function PassKeys() {
 
   const loginWithPassKey = async () => {
     try {
+      authApi.interceptors.request.clear();
       const res = await authApi.get<{
         status: string;
         challenge: string;
