@@ -29,9 +29,9 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <Navbar />
         <Toaster />
         <Providers>
+          <Navbar />
           {children}
         </Providers>
       </body>

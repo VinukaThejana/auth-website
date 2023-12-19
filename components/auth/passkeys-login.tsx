@@ -1,6 +1,7 @@
 "use client";
 
 import { get } from "@github/webauthn-json";
+import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ import { useToast } from "../ui/use-toast";
 export default function PassKeys() {
   const router = useRouter();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const [support, setSupport] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -43,6 +45,9 @@ export default function PassKeys() {
           "cred": cred,
         });
 
+        await queryClient.refetchQueries({
+          queryKey: ["user"],
+        });
         router.push("/");
       } catch (error) {
         const err = error as AxiosError<{

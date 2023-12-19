@@ -1,8 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import { HTMLAttributes, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BsLock, BsUnlock } from "react-icons/bs";
 import { z } from "zod";
@@ -19,13 +21,13 @@ import { cn } from "~/lib/utils";
 import { Errs } from "~/types/errors";
 import { User } from "~/types/user";
 import { schema } from "../utils/schema";
-import { HTMLAttributes, useState } from "react";
 
-interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> { }
+interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> {}
 
 export function LoginForm({ className, ...props }: UserAuthFormProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -62,6 +64,9 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
       toast({
         title: "Logged in",
       });
+      await queryClient.refetchQueries({
+        queryKey: ["user"],
+      });
       router.push("/");
     } catch (error) {
       const err = error as AxiosError<{
@@ -78,14 +83,14 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
         case "no_account_with_username":
           toast({
             title: "No account found",
-            description: "There is no account to be found with the given username"
-          })
+            description: "There is no account to be found with the given username",
+          });
           break;
         case "no_account_with_email":
           toast({
             title: "No account found",
-            description: "There is no account to be found with the given email address"
-          })
+            description: "There is no account to be found with the given email address",
+          });
           break;
         default:
           toast({
@@ -135,6 +140,9 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
                         setUser(null);
                         setIsLoading(false);
 
+                        await queryClient.refetchQueries({
+                          queryKey: ["user"],
+                        });
                         router.push("/");
                       } catch (error) {
                         const err = error as AxiosError<{
