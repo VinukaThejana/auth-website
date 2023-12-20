@@ -11,6 +11,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "api.dicebear.com",
       },
+      {
+        protocol: "http",
+        hostname: "localhost"
+      }
     ],
   },
 };
