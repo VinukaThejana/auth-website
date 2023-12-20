@@ -3,16 +3,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import dynamic from "next/dynamic";
-import { resolve } from "path";
 import { useRef, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { checkAccessToken, userApi } from "~/lib/api";
 import { Errs } from "~/types/errors";
 import { SessionToken } from "~/types/tokenSession";
-import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from "../ui/alert-dialog";
+import { AlertDialog, AlertDialogTrigger } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { useToast } from "../ui/use-toast";
+import Image from "next/image";
 
 const ReAuthenticate = dynamic(() => import("~/components/auth/reauthenticate-modal"), {
   ssr: false,
@@ -76,12 +76,33 @@ export default function Devices() {
 
                           <CardDescription className="flex flex-col p-4 gap-4">
                             <span className="flex flex-col gap-1">
-                              <span>
-                                OS : {device.OSName}
-                              </span>
-                              <span>
-                                Version : {device.OSVersion}
-                              </span>
+                              <Image
+                                src={device.MapURL}
+                                alt={device.IPAddress}
+                                width={400}
+                                height={250}
+                                onClick={() => {
+                                  window.location.href = `http://maps.google.com/maps?z=12&t=m&q=loc:${device.Lat}+${device.Lon}`
+                                }}
+                                className="hover:cursor-pointer"
+                              />
+                              <div
+                                className="flex flex-col justify-center mt-3"
+                              >
+                                <span
+                                  className="font-bold"
+                                >
+                                  {device.Country}, {device.City} ({device.Zip})
+                                </span>
+                                <span
+                                  className="font-semibold"
+                                >
+                                  {device.Timezone}
+                                </span>
+                                <span>
+                                  {device.OSName} ({device.OSVersion})
+                                </span>
+                              </div>
                             </span>
                             <Button
                               className="flex items-center justify-center gap-1 flex-row-reverse bg-red-600 hover:bg-red-700 w-56"
@@ -89,7 +110,7 @@ export default function Devices() {
                                 try {
                                   userApi.interceptors.request.use(checkAccessToken);
                                   await userApi.post("/devices/remove", {
-                                    "id": device.ID,
+                                    id: device.ID,
                                   });
 
                                   await refetchDevices();
@@ -137,7 +158,7 @@ export default function Devices() {
             bussinessLogic={async () => {
               userApi.interceptors.request.use(checkAccessToken);
               await userApi.post("/devices/remove", {
-                "id": removeDeviceID,
+                id: removeDeviceID,
               });
             }}
             refetchFns={refetchDevices}
