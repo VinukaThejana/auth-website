@@ -1,5 +1,4 @@
 "use client";
-
 import { create } from "@github/webauthn-json";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -20,13 +19,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
+
 
 export default function PassKeys() {
   const user = getUser();
@@ -39,9 +39,7 @@ export default function PassKeys() {
   const [editingPassKey, setEditingPassKey] = useState<string | undefined>(undefined);
 
   const {
-    data: passKeysData,
-    isLoading: isPassKeysLoading,
-    refetch: refetchPassKeys,
+    data: passKeysData, isLoading: isPassKeysLoading, refetch: refetchPassKeys,
   } = useQuery({
     queryKey: ["getPassKeys"],
     queryFn: async () => {
@@ -210,8 +208,7 @@ export default function PassKeys() {
                                   <Input
                                     className="w-96"
                                     value={passKeyName}
-                                    onChange={(e) => setPassKeyName(e.currentTarget.value)}
-                                  />
+                                    onChange={(e) => setPassKeyName(e.currentTarget.value)} />
                                 </div>
                               </AlertDialogDescription>
                             </AlertDialogHeader>
@@ -258,8 +255,7 @@ export default function PassKeys() {
                                                   className="w-48"
                                                   placeholder={passKey.Name}
                                                   value={passKeyName}
-                                                  onChange={(e) => setPassKeyName(e.currentTarget.value)}
-                                                />
+                                                  onChange={(e) => setPassKeyName(e.currentTarget.value)} />
                                               </>
                                             )
                                             : (
@@ -381,3 +377,4 @@ export default function PassKeys() {
     </Card>
   );
 }
+
