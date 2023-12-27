@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Providers as Provider } from "~/types/providers";
+import { Provider } from "~/types/providers";
 
 export const BACKEND_URL = "http://localhost:8080";
 
