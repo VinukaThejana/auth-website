@@ -52,72 +52,84 @@ export function Change() {
   const { errors } = formState;
 
   return (
-    <form
-      className="w-6/12 flex flex-col gap-4 mt-4"
-      onSubmit={handleSubmit(async (event) => {
-        try {
-          userApi.interceptors.request.use(checkAccessToken);
-          await userApi.post("/password/change", {
-            old_password: event.oldPassword,
-            password: event.password
-          })
-          await queryClient.refetchQueries({
-            queryKey: ["user_password"]
-          })
-          reset();
-        } catch (error) {
-          console.error(error)
-          toast({
-            title: "Something went wrong"
-          })
-        }
-      })}
-    >
-      <div className="grid gap-2">
-        <Label className="" htmlFor="confirmPassword">
-          Old Password
-        </Label>
-        <Input
-          id="oldPassword"
-          type={isPasswordVisible ? "text" : "password"}
-          autoCapitalize="none"
-          autoCorrect="off"
-          {...register("oldPassword")}
-        />
-        <FormError err={errors.oldPassword} />
-      </div>
-      <div className="grid gap-2">
-        <Label className="" htmlFor="password">
-          Password
-        </Label>
-        <div className="grid grid-cols-5 gap-2">
+    <div>
+      <form
+        className="w-6/12 flex flex-col gap-4 mt-4"
+        onSubmit={handleSubmit(async (event) => {
+          try {
+            userApi.interceptors.request.use(checkAccessToken);
+            await userApi.post("/password/change", {
+              old_password: event.oldPassword,
+              password: event.password
+            })
+            await queryClient.refetchQueries({
+              queryKey: ["user_password"]
+            })
+            reset();
+            toast({
+              title: "Password changed successfully"
+            })
+          } catch (error) {
+            console.error(error)
+            toast({
+              title: "Something went wrong"
+            })
+          }
+        })}
+      >
+        <div className="grid gap-2">
+          <Label className="" htmlFor="confirmPassword">
+            Old Password
+          </Label>
           <Input
-            id="password"
+            id="oldPassword"
             type={isPasswordVisible ? "text" : "password"}
             autoCapitalize="none"
-            autoComplete="email"
             autoCorrect="off"
-            className="col-span-4"
-            {...register("password")}
+            {...register("oldPassword")}
           />
-          <span
-            className="border border-slate-200 rounded-lg inline-flex items-center justify-center col-span-1"
-            onClick={() => setPasswordVisible(!isPasswordVisible)}
-          >
-            {isPasswordVisible ? <BsUnlock /> : <BsLock />}
-          </span>
+          <FormError err={errors.oldPassword} />
         </div>
-        <FormError err={errors.password} />
-      </div>
+        <div className="grid gap-2">
+          <Label className="" htmlFor="password">
+            Password
+          </Label>
+          <div className="grid grid-cols-5 gap-2">
+            <Input
+              id="password"
+              type={isPasswordVisible ? "text" : "password"}
+              autoCapitalize="none"
+              autoComplete="email"
+              autoCorrect="off"
+              className="col-span-4"
+              {...register("password")}
+            />
+            <span
+              className="border border-slate-200 rounded-lg inline-flex items-center justify-center col-span-1"
+              onClick={() => setPasswordVisible(!isPasswordVisible)}
+            >
+              {isPasswordVisible ? <BsUnlock /> : <BsLock />}
+            </span>
+          </div>
+          <FormError err={errors.password} />
+        </div>
 
-      <Button
-        className="w-1/2"
-        type="submit"
+        <Button
+          className="w-1/2"
+          type="submit"
+        >
+          {queryClient.getQueryState(["user_password"])?.status === "pending" ? (
+            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          ) : "Change Password"}
+        </Button>
+      </form>
+
+      <a
+        href="https://google.com"
+        className="mt-3 font-semibold text-sm text-blue-600"
       >
-        {queryClient.getQueryState(["user_password"])?.status === "pending" ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : "Change Password"}
-      </Button>
-    </form>
+        Forgot my password
+      </a>
+    </div>
   )
 }
