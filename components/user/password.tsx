@@ -6,6 +6,7 @@ import { checkAccessToken, userApi } from "~/lib/api";
 import { AxiosError } from "axios";
 import { Errs } from "~/types/errors";
 import { Add } from "./passwords/add";
+import { Change } from "./passwords/change";
 
 
 
@@ -42,9 +43,7 @@ export default function Password() {
       </CardHeader>
 
       <CardContent>
-        {!isPasswordSet ? (
-          <Add />
-        ) : null}
+        {!isPasswordSet ? <Add /> : <Change />}
       </CardContent>
     </Card>
   ) : null
