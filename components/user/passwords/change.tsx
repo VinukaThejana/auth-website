@@ -11,6 +11,10 @@ import { Label } from "~/components/ui/label";
 import { useToast } from "~/components/ui/use-toast";
 import { FormError } from "~/components/util/form-error";
 import { checkAccessToken, userApi } from "~/lib/api";
+import { Forgot } from "./forgot";
+import { Errs } from "~/types/errors";
+import { getUser } from "~/lib/user";
+import { loadavg } from "os";
 
 
 const schema = z.object({
@@ -43,6 +47,9 @@ export function Change() {
   const queryClient = useQueryClient();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [isPasswordResetButtonOpen, setIsPasswordResetButtonOpen] = useState(false);
+
+  const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
 
   const { register, formState, handleSubmit, reset } = useForm<
     z.infer<typeof schema>
@@ -124,12 +131,42 @@ export function Change() {
         </Button>
       </form>
 
-      <a
-        href="https://google.com"
+      <button
         className="mt-3 font-semibold text-sm text-blue-600"
+        disabled={resetPasswordLoading}
+        onClick={async () => {
+          setResetPasswordLoading(true);
+          try {
+            const user = getUser();
+            if (!user) {
+              return;
+            }
+            await userApi.patch("/password/reset", {
+              email: user.email
+            })
+            setResetPasswordLoading(false);
+            setIsPasswordResetButtonOpen(true);
+          } catch (error) {
+            setResetPasswordLoading(false);
+            // @ts-ignore
+            const err = error.response.data.status as Errs
+            console.error(err)
+            toast({
+              title: "Something went wrong"
+            });
+          }
+        }}
       >
-        Forgot my password
-      </a>
+        {resetPasswordLoading ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" /> : "Forgot my password"}
+      </button>
+
+
+      {isPasswordResetButtonOpen ? <Forgot
+        isOpen={isPasswordResetButtonOpen}
+        setIsOpen={setIsPasswordResetButtonOpen}
+      /> :
+        null
+      }
     </div>
   )
 }
