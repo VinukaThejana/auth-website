@@ -17,6 +17,7 @@ export type Errs =
   "two_factor_verification_not_enabled" |
   "continue_with_two_factor_authentication" |
   "otp_token_is_not_valid" |
+  "otp_token_expired" |
   "memonic_phrase_not_valid" |
   "reauth_token_not_present" |
   "verify_your_email_address_first" |
@@ -27,4 +28,5 @@ export type Errs =
   "could_not_parse_access_token_from_oauth_provider" |
   "could_not_parse_user_from_oauth_provider" |
   "enter_a_new_username" |
-  "link_account_with_exsisting_email";
+  "link_account_with_exsisting_email" |
+  "email_is_not_verified";
